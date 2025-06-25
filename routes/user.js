@@ -6,7 +6,7 @@ const User = require("../model/user");
 
 // Get all users
 router.get(
-  "/",
+  "/:id",
   asyncHandler(async (req, res) => {
     try {
       const users = await User.find();
