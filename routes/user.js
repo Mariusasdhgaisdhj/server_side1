@@ -24,10 +24,11 @@ router.get(
 // Login
 router.post("/login", async (req, res) => {
   const { name, password } = req.body;
+  const lowerName = name?.toLowerCase();
 
   try {
     // Check if the user exists
-    const user = await User.findOne({ name });
+    const user = await User.findOne({ name: lowerName });
 
     if (!user || !user.validPassword(password)) {
       return res
@@ -71,8 +72,9 @@ router.get(
 router.post(
   "/register",
   asyncHandler(async (req, res) => {
-    const { name, password } = req.body;
-    if (!name || !password) {
+    let { name, password } = req.body;
+    const lowerName = name?.toLowerCase();
+    if (!lowerName || !password) {
       return res
         .status(400)
         .json({ success: false, message: "Name and password are required." });
@@ -80,14 +82,14 @@ router.post(
 
     try {
       // Check if the user already exists
-      const existingUser = await User.findOne({ name });
+      const existingUser = await User.findOne({ name: lowerName });
       if (existingUser) {
         return res
           .status(400)
           .json({ success: false, message: "Account already exists." });
       }
 
-      const user = new User({ name, password });
+      const user = new User({ name: lowerName, password });
       const newUser = await user.save();
       res.json({
         success: true,
